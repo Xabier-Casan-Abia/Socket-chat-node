@@ -1,9 +1,14 @@
 let socket = io();
-const params = new URLSearchParams(window.location.search);
+var params = new URLSearchParams(window.location.search);
 
 if (!params.has('name') || !params.has('room')) {
     window.location = 'index.html';
     throw new Error('Name and Room are required');
+}
+
+if (params.get('name') === 'Admin' || params.get('name') === 'admin' || params.get('name') === 'administrator' || params.get('name') === 'Administrator') {
+    window.location = 'index.html';
+    throw new Error('Please choose a different name');
 }
 
 const user = {
@@ -17,7 +22,8 @@ socket.on('connect', () => {
     console.log('Connected to server');
 
     socket.emit('enterChat', user, (resp) => {
-        console.log('Users: ', resp);
+        renderUsers(resp);
+        renderRoom(resp.room);
     });
 
 });
@@ -28,12 +34,14 @@ socket.on('disconnect', () => {
 
 // Listen to information
 socket.on('createMessage', (message) => {
-    console.log('Server:', message);
+    renderMessage(message, false);
+    scrollBottom();
 });
 
 // Listen to users entering or leaving the chat
 socket.on('usersList', (users) => {
-    console.log('Server:', users);
+    renderUsers(users);
+
 });
 
 // Listen to private messages

@@ -1,0 +1,13 @@
+.chat-list {
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    height: 600px !important;
+}
+
+input {
+    width: 100%;
+}
+
+footer {
+    text-align: center;
+}
